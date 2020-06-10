@@ -1,0 +1,78 @@
+https://www.youtube.com/watch?v=Bcs-inRnLDc&list=PLI00Nzb9DXqTKTgfXWrnmnfVnfY1vFXY0
+
+TP :
+
+- Création d'un fihcier de déploiement à partir d'une simple image 
+=> Déploiement et accès 
+*******************************************************************
+
+Utilisation de config.
+
+Image poussée ver docker-hub
+
+https://spring.io/guides/gs/spring-boot-kubernetes/
+
+Laisser Kubernetes créer le fichier de déploiement
+
+kubectl create deployment config --image=dthibau/config --dry-run -o=yaml > deployment.yaml
+echo --- >> deployment.yaml
+kubectl create service clusterip config --tcp=8888:8888 --dry-run -o=yaml >> deployment.yaml
+kubectl apply -f deployment.yaml
+
+Renommer le template pour enlever les _
+
+
+Accès (temporaire au config)
+kubectl port-forward service/config 8888:8888
+
+Supprimmer tout:
+kubectl delete service config
+kubectl delete deployment config
+
+Utilisation du service config map de Kubernetes
+************************************************
+Utilisation de annuaire :
+
+Ajout d'une configmap à partir de annuaire.yml
+kubectl create configmap annuaire-config --from-file=./src/main/resources/shared/annuaire.yml
+
+Ajout d'une configmap à partir de application.yml
+kubectl create configmap annuaire-config --from-file=./src/main/resources/shared/application.yml
+
+
+Modification starters pour kubernetes config + bootstrap.yml
+
+Build and push
+
+kubectl create deployment annuaire --image=dthibau/annuaire --dry-run -o=yaml > deployment.yaml
+echo --- >> deployment.yaml
+kubectl create service clusterip annuaire --tcp=1111:1111 --dry-run -o=yaml >> deployment.yaml
+
+kubectl apply -f deployment.yaml
+
+kubectl port-forward service/annuaire 1111:1111
+
+(
+Message: Forbidden!Configured service account doesn't have access. Service account may have been revoked. configmaps "application.yml" is forbidden: User "system:serviceaccount:default:default" cannot get resource "configmaps" in API group "" in the namespace "default".
+
+https://medium.com/@nieldw/rbac-and-spring-cloud-kubernetes-847dd0f245e4
+)
+Création d'un ClusterRole :
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: service-discovery-client
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["services", "pods", "configmaps", "endpoints"]
+  verbs: ["get", "watch", "list"]
+
+Affectation du role à default:default
+kubectl create rolebinding default:service-discovery-client --clusterrole service-discovery-client --serviceaccount default:default
+
+
+Utilisation de secrets dans Kubernetes
+************************************************
+kubectl create configmap documents-config --from-file=./src/main/resources/shared/documents-service.yml
+
+
