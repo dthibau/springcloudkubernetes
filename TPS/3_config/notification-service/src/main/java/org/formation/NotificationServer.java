@@ -21,11 +21,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  * @author Paul Chapman
  */
 @SpringBootApplication
-@EnableEurekaClient
+//@EnableEurekaClient
 public class NotificationServer {
-
-	@Autowired
-	MailConfiguration mailConfiguration;
 	
 	@Autowired
 	MailConfigurationProperties mailConfigurationProperties;

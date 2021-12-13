@@ -1,3 +1,12 @@
-Spring Cloud Gateway : https://www.javainuse.com/spring/cloud-gateway-eureka
+TP Jkube, virer le TP ou configurer docker pour accèder au hôte minikube, eval $(minikube docker-env)
 
+Avoir des descripteur avec les liveness et readiness probe
 Essayer de garder profil netflix et Kubernetes dans Maven ET les fichiers de configuration
+
+Garder la BD postgres de delivery-service, avoir des slides sur les ressources volumes, Usage BD, Kafka
+
+oAuth2 dans Kubernetes ...
+
+TP Istio : aller jusqu'au bout 
+- Inclure Grafana, Prometheus dans le déploiement
+- Canary deployment
